@@ -68,7 +68,7 @@ def mog_bic(
     return bic, LL
 
 
-def plot_ellipse(mean, cov, color, ax, cluster_n):
+def plot_ellipse(mean: float, cov: np.array, ax: plt.Axes, color: str, cluster_n: int) -> None:
     
     ls_list = ['-', '--', ':', '-.']
 
@@ -168,9 +168,10 @@ def get_optimal_cluster_number(possible_clusters: tuple, num_seeds: int, data: n
         )
         ax.set_xlabel("Number of clusters")
         ax.set_ylabel("BIC")
-        ax.scatter(optimal_cluster_number, lowest_bic[cluster_index[0]], c="green", label="Optimal number of clusters", zorder = 10)
+        ax.scatter(optimal_cluster_number, lowest_bic[cluster_index[0]], c="green", label="Optimal number of clusters", zorder = 10, s=20)
         ax.legend()
         ax.set_title("Optimal number of clusters for the GMM")
         ax.set_yticks([])
+        ax.set_xticks(possible_clusters)
 
     return optimal_cluster_number
