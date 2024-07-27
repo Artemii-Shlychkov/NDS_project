@@ -5,6 +5,7 @@ from scipy import stats
 import matplotlib 
 import matplotlib.pyplot as plt
 from sklearn.mixture import GaussianMixture as GMM
+import seaborn as sns
 
 def mog_bic(
     x: np.ndarray, m: np.ndarray, S: np.ndarray, p: np.ndarray
@@ -175,3 +176,89 @@ def get_optimal_cluster_number(possible_clusters: tuple, num_seeds: int, data: n
         ax.set_xticks(possible_clusters)
 
     return optimal_cluster_number
+
+def plot_TSNE(ax: plt.Axes, data: np.ndarray, colors: np.ndarray, title: str) -> None:
+    """
+    Plot t-SNE data with colors
+
+    Parameters
+    ----------
+    ax: plt.Axes
+        Axis to plot on
+
+    data: np.ndarray
+        Data to plot
+
+    colors: np.ndarray
+        Colors to use for plotting
+
+    title: str
+        Title of the plot
+
+    Return
+    ------
+    None
+    """
+    ax.scatter(data[:, 0], data[:, 1], s=10, c=colors, alpha=1)
+    ax.set_xlabel("")
+    ax.set_ylabel("")
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.axis("equal")
+    ax.set_title(title)
+    sns.despine(ax=ax, left=True, bottom=True)
+
+
+def plot_PC1_PC2(
+    ax: plt.Axes, data: np.ndarray, colors: np.ndarray, title: str
+) -> None:
+    """
+    Plot PC1 and PC2 data with colors
+
+    Parameters
+    ----------
+    ax: plt.Axes
+        Axis to plot on
+
+    data: np.ndarray
+        Data to plot
+
+    colors: np.ndarray
+        Colors to use for plotting
+
+    title: str
+        Title of the plot
+
+    Return
+    ------
+    None
+    """
+
+    ax.scatter(data[:, 0], data[:, 1], s=10, c=colors, alpha=1)
+    ax.set_xlabel("PC1")
+    ax.set_ylabel("PC2")
+    ax.set_xticks([])
+    ax.set_yticks([])
+    ax.axis = "equal"
+    ax.set_title(title)
+
+
+def calculate_font_size(base_size: int, factor: float) -> int:
+    """
+    Calculate font size based on base size and factor
+
+    Parameters
+    ----------
+    base_size: int
+        Base size of the font
+
+    factor: float
+        Factor to scale the font size
+
+    Return
+    ------
+    int
+        Font size
+    """
+
+    return max(base_size * factor, 4)  # Ensure minimum font size of 6
