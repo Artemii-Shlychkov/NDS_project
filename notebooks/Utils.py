@@ -415,16 +415,12 @@ def dim_reduction(data: np.ndarray, labels: np.ndarray) -> dict:
     ------
     dict
         Dictionary containing the reduced data and the accuracy and recall scores
-
     """
-
-    
-
-    X_test, X_train, y_test, y_train = train_test_split(
+    X_train, X_test, y_train, y_test = train_test_split(
         data, labels, test_size=0.2, random_state=42
     )
 
-    knn = KNeighborsClassifier(n_neighbors=np.sqrt(X_test.shape[0]).astype(int))
+    knn = KNeighborsClassifier(n_neighbors=int(np.sqrt(X_train.shape[0])))
 
     nca = make_pipeline(
         StandardScaler(),
@@ -437,26 +433,23 @@ def dim_reduction(data: np.ndarray, labels: np.ndarray) -> dict:
     methods = {"PCA": pca, "NCA": nca, "LDA": lda}
     reduced_data = {}
 
-    for i, (name, model) in enumerate(methods.items()):
-        # print(name)
-        # print(model)
+    for name, model in methods.items():
         reduced_data[name] = {}
 
         model.fit(X_train, y_train)
+        X_train_reduced = model.transform(X_train)
+        X_test_reduced = model.transform(X_test)
 
-        knn.fit(model.transform(X_train), y_train)
+        knn.fit(X_train_reduced, y_train)
+        y_pred = knn.predict(X_test_reduced)
 
-        accuracy = knn.score(model.transform(X_test), y_test)
-        recall = recall_score(
-            y_test, knn.predict(model.transform(X_test)), average="weighted"
-        )
+        accuracy = knn.score(X_test_reduced, y_test)
+        recall = recall_score(y_test, y_pred, average="weighted")
 
-        model_data = model.transform(data)
-
-        reduced_data[name]["data"] = model_data
+        reduced_data[name]["data"] = model.transform(data)
         reduced_data[name]["accuracy"] = accuracy
         reduced_data[name]["recall"] = recall
-    
+
     for key in reduced_data.keys():
         print(f"{key} accuracy: {reduced_data[key]['accuracy']:.2f}")
         print(f"{key} recall: {reduced_data[key]['recall']:.2f}")
